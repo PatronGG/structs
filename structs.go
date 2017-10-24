@@ -7,11 +7,18 @@ import (
 	"reflect"
 )
 
+func stringIdentity(name string) string {
+	return name
+}
+
 var (
 	// DefaultTagName is the default tag name for struct fields which provides
 	// a more granular to tweak certain structs. Lookup the necessary functions
 	// for more info.
 	DefaultTagName = "structs" // struct's field default tag name
+	// NameTransform is a string -> string transformation applied to field names
+	// when converting them to maps
+	NameTransform = stringIdentity
 )
 
 // Struct encapsulates a struct type to provide several high level functions
@@ -103,6 +110,8 @@ func (s *Struct) FillMap(out map[string]interface{}) {
 		if tagName != "" {
 			name = tagName
 		}
+
+		name = NameTransform(name)
 
 		// if the value is a zero value and the field is marked as omitempty do
 		// not include
